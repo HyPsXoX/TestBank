@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .professor-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .logout-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+    
+    <div class="professor-text">
+        Professor's View
+    </div>
+
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/login';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Manage Account</title>
+    <style>
+        .readonly {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border: 1px solid #c3e6cb;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        <!-- Side Menu -->
+        <div class="side-menu">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <%= user.firstName.charAt(0) %><%= user.lastName.charAt(0) %>
+                </div>
+                <div class="user-details">
+                    <div class="user-name"><%= user.firstName %> <%= user.lastName %></div>
+                    <div class="user-role <%= user.role === 'Admin' || user.role === 'Super Admin' ? 'admin-role' : 'professor-role' %>">
+                        <%= user.role %>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="menu-navigation">
+                <a href="/admin/dashboard" class="menu-item">
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13 9V3h8v6zM3 13V3h8v10zm10 8V11h8v10zM3 21v-6h8v6z"/></svg>
+                    </span>
+                    Dashboard
+                </a>
+                <a href="/test-management" class="menu-item">
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" fill-rule="evenodd" d="M39 13a3 3 0 0 0-3 3v2h6v-2a3 3 0 0 0-3-3m3 7h-6v16.5l3 4.5l3-4.5zM6 9v30a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3H9a3 3 0 0 0-3 3m14 6a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2h-8a1 1 0 0 1-1-1m1 3a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2zm-1 10a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2h-8a1 1 0 0 1-1-1m1 3a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2zm-9-3v3h3v-3zm-1-2h5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1m6.707-10.293a1 1 0 0 0-1.414-1.414L13 17.586l-1.293-1.293a1 1 0 0 0-1.414 1.414L13 20.414z" clip-rule="evenodd"/></svg>
+                    </span>
+                    Test Management
+                </a>
+                <a href="/student-performance" class="menu-item">
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M4.998 9V1H19.5L23 4.5V23H4M18 1v5h5M3 19l5-5l4 4l6.5-6.5M19 17v-6h-6"/></svg>
+                    </span>
+                    Student Performance
+                </a>
+                <% if (user.role === 'Admin' || user.role === 'Super Admin') { %>
+                <a href="/admin/register" class="menu-item">
+                    <span class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M1 20v-2.8q0-.85.438-1.562T2.6 14.55q1.55-.775 3.15-1.162T9 13t3.25.388t3.15 1.162q.725.375 1.163 1.088T17 17.2V20zm18 0v-3q0-1.1-.612-2.113T16.65 13.15q1.275.15 2.4.513t2.1.887q.9.5 1.375 1.112T23 17v3zM9 12q-1.65 0-2.825-1.175T5 8t1.175-2.825T9 4t2.825 1.175T13 8t-1.175 2.825T9 12m10-4q0 1.65-1.175 2.825T15 12q-.275 0-.7-.062t-.7-.138q.675-.8 1.038-1.775T15 8t-.362-2.025T13.6 4.2q.35-.125.7-.163T15 4q1.65 0 2.825 1.175T19 8"/></svg>
+                    </span>
+                    Account Management
+                </a>
+                <% } %>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="top-nav-left">
+                    <div class="current-date" id="currentDate"></div>
+                    <div class="current-time" id="currentTime"></div>
+                </div>
+                <div class="top-nav-right">
+                    <div class="nav-icon" onclick="toggleNotifications()" title="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19v1H3v-1l2-2v-6c0-3.1 2.03-5.83 5-6.71V4a2 2 0 0 1 2-2a2 2 0 0 1 2 2v.29c2.97.88 5 3.61 5 6.71v6zm-7 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2"/></svg>
+                    </div>
+                    <div class="nav-icon" onclick="toggleSettings()" title="Settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
+                    </div>
+                    <div class="nav-icon profile-dropdown">
+                        <div class="profile-trigger" onclick="toggleProfile()" title="Profile">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
+                        </div>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <a href="/manage-account" class="dropdown-item">Manage Account</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="javascript:void(0)" class="dropdown-item" onclick="handleLogout()">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Account Content -->
+            <div class="content-area">
+                <div class="account-management">
+                    <h1>Manage Account</h1>
+                    <p>Update your personal information and account settings</p>
+                    
+                    <div id="messageContainer"></div>
+                    
+                    <form id="accountForm" class="account-form">
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <h2>Personal Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" name="lastName" value="<%= user.lastName %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" name="firstName" value="<%= user.firstName %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Middle Name</label>
+                                    <input type="text" name="middleName" value="<%= user.middleName %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contact Number</label>
+                                    <input type="tel" name="contactNumber" value="<%= user.contactNumber %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" name="email" value="<%= user.email %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Employment Information -->
+                        <div class="form-section">
+                            <h2>Employment Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Employee ID</label>
+                                    <input type="text" name="employeeID" value="<%= user.employeeID %>" readonly class="input readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Department</label>
+                                    <input type="text" name="department" value="<%= user.department %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Designation</label>
+                                    <input type="text" name="designation" value="<%= user.designation %>" 
+                                           <%= user.role === 'Professor' ? 'readonly' : '' %> 
+                                           class="input <%= user.role === 'Professor' ? 'readonly' : '' %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Employment Status</label>
+                                    <select name="employmentStatus" class="input" <%= user.role === 'Professor' ? 'disabled' : '' %>>
+                                        <option value="">Select Employment Status</option>
+                                        <option value="Full-time" <%= user.employmentStatus === 'Full-time' ? 'selected' : '' %>>Full-time</option>
+                                        <option value="Part-time" <%= user.employmentStatus === 'Part-time' ? 'selected' : '' %>>Part-time</option>
+                                        <option value="Contractual" <%= user.employmentStatus === 'Contractual' ? 'selected' : '' %>>Contractual</option>
+                                    </select>
+                                    <% if (user.role === 'Professor') { %>
+                                        <input type="hidden" name="employmentStatus" value="<%= user.employmentStatus %>">
+                                    <% } %>
+                                </div>
+                                <% if (user.role === 'Admin' || user.role === 'Super Admin') { %>
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <select name="role" class="input">
+                                        <option value="Professor" <%= user.role === 'Professor' ? 'selected' : '' %>>Professor</option>
+                                        <option value="Admin" <%= user.role === 'Admin' ? 'selected' : '' %>>Admin</option>
+                                        <option value="Super Admin" <%= user.role === 'Super Admin' ? 'selected' : '' %>>Super Admin</option>
+                                    </select>
+                                </div>
+                                <% } else { %>
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <input type="text" value="<%= user.role %>" readonly class="input readonly">
+                                    <input type="hidden" name="role" value="<%= user.role %>">
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Password Change -->
+                        <div class="form-section">
+                            <h2>Change Password</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" name="currentPassword" class="input" placeholder="Enter current password to change">
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" name="newPassword" class="input" placeholder="Enter new password">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" name="confirmPassword" class="input" placeholder="Confirm new password">
+                                </div>
+                            </div>
+                            <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
+                                <strong>Note:</strong> Leave password fields blank if you don't want to change your password.
+                            </p>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="location.href='/admin/dashboard'">Cancel</button>
+                            <button type="submit" class="btn">Update Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+        
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Dropdown functionality
+       function toggleProfile() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function toggleNotifications() {
+            alert('Notifications feature coming soon!');
+        }
+
+        function toggleSettings() {
+            alert('Settings feature coming soon!');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.profile-trigger') && !event.target.closest('.profile-trigger')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        // Show message function
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="${type}-message">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Form submission
+        document.getElementById('accountForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Validate passwords if any password field is filled
+            if (data.newPassword || data.confirmPassword || data.currentPassword) {
+                if (!data.currentPassword) {
+                    showMessage('Please enter your current password to change password.', 'error');
+                    return;
+                }
+                if (data.newPassword !== data.confirmPassword) {
+                    showMessage('New passwords do not match.', 'error');
+                    return;
+                }
+                if (data.newPassword && data.newPassword.length < 8) {
+                    showMessage('New password must be at least 8 characters long.', 'error');
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch('/api/auth/update-account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('Account updated successfully!', 'success');
+                    // Reload page after 2 seconds to show updated data
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showMessage(result.msg || 'Error updating account', 'error');
+                }
+            } catch (error) {
+                console.error('Update error:', error);
+                showMessage('Error updating account. Please try again.', 'error');
+            }
+        });
+
+        async function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    const response = await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        window.location.href = '/login';
+                    } else {
+                        alert(data.msg || 'Logout failed');
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    window.location.href = '/login';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

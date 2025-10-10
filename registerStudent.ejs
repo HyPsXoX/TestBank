@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Register as Student</h2>
+            <div id="registerForm">
+                <!-- Separated Name Fields -->
+                <div>
+                    <input class="input" name="lastName" placeholder="Last Name" />
+                    <p class="hint">Last name is required.</p>
+                </div>
+                <div>
+                    <input class="input" name="firstName" placeholder="First Name" />
+                    <p class="hint">First name is required.</p>
+                </div>
+                <div>
+                    <input class="input" name="middleName" placeholder="Middle Name" />
+                    <p class="hint">Middle name is required.</p>
+                </div>
+                
+                <div>
+                    <input class="input" name="studentID" placeholder="nn-nnnn-nnnnnn" />
+                    <p class="hint">Format: nn-nnnn-nnnnnn (e.g., 12-3456-789012)</p>
+                </div>
+                <div>
+                    <input class="input" name="email" placeholder="name.au@phinmaed.com" />
+                    <p class="hint">Format: name.au@phinmaed.com (e.g., jama.presentacion.au@phinmaed.com)</p>
+                </div>
+                <div>
+                    <input class="input" name="course" placeholder="Course" />
+                    <p class="hint">Course is required.</p>
+                </div>
+                <div>
+                    <input class="input" name="section" placeholder="Section" />
+                    <p class="hint">Section is required.</p>
+                </div>
+                <div>
+                    <select class="input" name="yearLevel">
+                        <option value="">Select Year Level</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                    </select>
+                    <p class="hint">Please select a valid year level.</p>
+                </div>
+                <div class="password-box">
+                    <input class="input" name="password" type="password" placeholder="Password" />
+                    <div class="password-hints">
+                        <p id="lenReq">• At least 8 characters</p>
+                        <p id="upperReq">• One uppercase letter (A–Z)</p>
+                        <p id="numReq">• One number (0–9)</p>
+                        <p id="specReq">• One special character (!@#$%^&*)</p>
+                    </div>
+                </div>
+                <div>
+                    <input class="input" name="confirmPassword" type="password" placeholder="Confirm Password" />
+                    <p class="hint">Passwords do not match.</p>
+                </div>
+                <button type="button" id="registerBtn" class="btn">Register as Student</button>
+                <button class="btn" onclick="location.href='/login'">Back to Login</button>
+                <button class="btn" onclick="location.href='/register'">Choose Different Role</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const validators = {
+            lastName: v => v.trim() !== "",
+            firstName: v => v.trim() !== "",
+            middleName: v => v.trim() !== "",
+            studentID: v => /^\d{2}-\d{4}-\d{6}$/.test(v),
+            email: v => /^[a-z]+\.[a-z]+\.au@phinmaed\.com$/.test(v.trim().toLowerCase()),
+            course: v => v.trim() !== "",
+            section: v => v.trim() !== "",
+            yearLevel: v => v !== "",
+            confirmPassword: v => {
+                const p = document.querySelector('input[name="password"]').value;
+                return v === p && v !== "";
+            }
+        };
+
+        // Password live validation
+        const passwordField = document.querySelector('input[name="password"]');
+        const hints = {
+            lenReq: document.getElementById("lenReq"),
+            upperReq: document.getElementById("upperReq"),
+            numReq: document.getElementById("numReq"),
+            specReq: document.getElementById("specReq")
+        };
+
+        passwordField.addEventListener("input", () => {
+            const val = passwordField.value;
+            const lenOK = val.length >= 8;
+            const upperOK = /[A-Z]/.test(val);
+            const numOK = /\d/.test(val);
+            const specOK = /[!@#$%^&*]/.test(val);
+
+            const conditions = [
+                { el: hints.lenReq, ok: lenOK },
+                { el: hints.upperReq, ok: upperOK },
+                { el: hints.numReq, ok: numOK },
+                { el: hints.specReq, ok: specOK },
+            ];
+
+            let allValid = true;
+            conditions.forEach(({ el, ok }) => {
+                el.style.display = ok ? "none" : "block";
+                if (!ok) allValid = false;
+            });
+
+            passwordField.classList.toggle("valid", allValid);
+            passwordField.classList.toggle("error", !allValid);
+        });
+
+        // Live input validation
+        document.querySelectorAll(".input").forEach(input => {
+            input.addEventListener("input", () => {
+                const hint = input.parentElement.querySelector(".hint");
+                const val = input.value;
+
+                // Auto-uppercase for name fields, course, and section
+                if (['lastName', 'firstName', 'middleName', 'course', 'section'].includes(input.name)) {
+                    input.value = val.toUpperCase();
+                }
+
+                // Validation
+                if (input.name !== "password") {
+                    const valid = validators[input.name] ? validators[input.name](input.value) : true;
+                    input.classList.toggle("valid", valid);
+                    input.classList.toggle("error", !valid);
+                    if (hint) hint.style.display = valid ? "none" : "block";
+                }
+            });
+        });
+
+        // Register button
+        document.getElementById("registerBtn").addEventListener("click", async (e) => {
+            e.preventDefault();
+            let allValid = true;
+            const form = {};
+
+            document.querySelectorAll(".input").forEach(input => {
+                const isValid = input.name === "password" ? 
+                    passwordField.classList.contains("valid") : 
+                    validators[input.name] ? 
+                    validators[input.name](input.value) : 
+                    true;
+
+                if (!isValid && input.offsetParent !== null) {
+                    input.classList.add("error");
+                    input.classList.remove("valid");
+                    const hint = input.parentElement.querySelector(".hint");
+                    if (hint) hint.style.display = "block";
+                    allValid = false;
+                }
+                if (input.name) form[input.name] = input.value.trim();
+            });
+
+            if (!allValid) {
+                alert("Please fix all errors before submitting.");
+                return;
+            }
+
+            // Prepare payload with fullName constructed from separate fields
+            const payload = {
+                fullName: `${form.lastName}, ${form.firstName} ${form.middleName}`.trim(),
+                lastName: form.lastName,
+                firstName: form.firstName,
+                middleName: form.middleName,
+                studentID: form.studentID,
+                email: form.email,
+                course: form.course,
+                section: form.section,
+                yearLevel: form.yearLevel,
+                password: form.password
+            };
+
+            try {
+                const res = await fetch('/api/student/register', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.msg || "Student registered successfully!");
+                    window.location.href = "/login";
+                } else {
+                    alert(data.msg || "Registration failed. Please check your input.");
+                }
+            } catch (err) {
+                console.error("❌ Error saving data:", err);
+                alert("Something went wrong while saving.");
+            }
+        });
+    </script>
+</body>
+</html>
