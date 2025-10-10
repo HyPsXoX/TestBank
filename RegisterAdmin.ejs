@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - Admin/Professor</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .form-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .form-section h2 {
+      margin-top: 0;
+      color: #333;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
+    }
+    .btn-secondary {
+      background: #6c757d;
+    }
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      border: 1px solid #c3e6cb;
+    }
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      border: 1px solid #f5c6cb;
+    }
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    .page-header h1 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+    }
+    .page-header p {
+      margin: 0;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout-container">
+    <%- include('MenuBar') %>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Registration Content -->
+      <div class="content-area">
+        <div class="page-header">
+          <h1>Register New Admin/Professor</h1>
+          <p>Create new administrator or professor accounts for the system</p>
+        </div>
+
+        <div id="messageContainer"></div>
+        
+        <form id="adminForm" class="account-form">
+          <input type="hidden" name="createdBy" id="createdByInput" />
+
+          <!-- Personal Information -->
+          <div class="form-section">
+            <h2>Personal Information</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Last Name</label>
+                <input class="input" name="lastName" placeholder="Last Name" required />
+                <p class="hint">Last name is required.</p>
+              </div>
+              <div class="form-group">
+                <label>First Name</label>
+                <input class="input" name="firstName" placeholder="First Name" required />
+                <p class="hint">First name is required.</p>
+              </div>
+              <div class="form-group">
+                <label>Middle Name</label>
+                <input class="input" name="middleName" placeholder="Middle Name" required />
+                <p class="hint">Middle name is required.</p>
+              </div>
+              <div class="form-group">
+                <label>Contact Number</label>
+                <input class="input" name="contactNumber" placeholder="Contact Number" required />
+                <p class="hint">Contact number is required.</p>
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input class="input" name="email" type="email" placeholder="Email Address" required />
+                <p class="hint">Valid email is required.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Employment Information -->
+          <div class="form-section">
+            <h2>Employment Information</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Employee ID</label>
+                <input class="input" name="employeeID" placeholder="Employee ID (Format: A-12-3456 or P-12-3456)" required />
+                <p class="hint">Employee ID is required. Use A- for Admin, P- for Professor</p>
+              </div>
+              <div class="form-group">
+                <label>Department</label>
+                <input class="input" name="department" placeholder="Department" required />
+                <p class="hint">Department is required.</p>
+              </div>
+              <div class="form-group">
+                <label>Designation</label>
+                <select class="input" name="designation" required>
+                  <option value="">Select Designation</option>
+                  <option value="Lecturer">Lecturer</option>
+                  <option value="Professor">Professor</option>
+                  <option value="Dean">Dean</option>
+                  <option value="Department Head">Department Head</option>
+                  <option value="Administrative Staff">Administrative Staff</option>
+                </select>
+                <p class="hint">Please select a designation.</p>
+              </div>
+              <div class="form-group">
+                <label>Employment Status</label>
+                <select class="input" name="employmentStatus" required>
+                  <option value="">Select Employment Status</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contractual">Contractual</option>
+                </select>
+                <p class="hint">Please select employment status.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Information -->
+          <div class="form-section">
+            <h2>Account Information</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Role</label>
+                <select class="input" name="role" required>
+                  <option value="">Select Role</option>
+                  <option value="Professor">Professor</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Head">Head</option>
+                  <option value="Super Admin">Super Admin</option>
+                </select>
+                <p class="hint">Please select a role.</p>
+              </div>
+              <div class="form-group">
+                <label>Account Status</label>
+                <select class="input" name="accountStatus" required>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                  <option value="Suspended">Suspended</option>
+                </select>
+                <p class="hint">Please select account status.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Section -->
+          <div class="form-section">
+            <h2>Password</h2>
+            <div class="form-grid">
+              <div class="form-group password-box">
+                <label>Password</label>
+                <input class="input" name="password" type="password" placeholder="Password" required />
+                <div class="password-hints">
+                  <p id="lenReq">• At least 8 characters</p>
+                  <p id="upperReq">• One uppercase letter (A–Z)</p>
+                  <p id="numReq">• One number (0–9)</p>
+                  <p id="specReq">• One special character (!@#$%^&*)</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Confirm Password</label>
+                <input class="input" name="confirmPassword" type="password" placeholder="Confirm Password" required />
+                <p class="hint">Passwords do not match.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="location.href='/admin/account-management'">Back to Account Management</button>
+            <button type="submit" class="btn">Register Admin/Professor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get current logged-in admin info for createdBy field
+    async function getCurrentAdmin() {
+      try {
+        const res = await fetch('/api/auth/current-user');
+        const data = await res.json();
+        
+        if (res.ok) {
+          document.getElementById('createdByInput').value = data.user.fullName;
+        } else {
+          alert('Please login first');
+          window.location.href = '/login';
+        }
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+        alert('Please login first');
+        window.location.href = '/login';
+      }
+    }
+
+    // Call on page load
+    getCurrentAdmin();
+
+    const validators = {
+      lastName: v => v.trim() !== "",
+      firstName: v => v.trim() !== "",
+      middleName: v => v.trim() !== "",
+      contactNumber: v => /^\+?[\d\s-()]{10,}$/.test(v),
+      email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+      employeeID: v => /^[AP]-\d{2}-\d{4}$/.test(v),
+      department: v => v.trim() !== "",
+      designation: v => v !== "",
+      employmentStatus: v => v !== "",
+      role: v => v !== "",
+      accountStatus: v => v !== "",
+      confirmPassword: v => {
+        const p = document.querySelector('input[name="password"]').value;
+        return v === p && v !== "";
+      }
+    };
+
+    // Password live validation
+    const passwordField = document.querySelector('input[name="password"]');
+    const hints = {
+      lenReq: document.getElementById("lenReq"),
+      upperReq: document.getElementById("upperReq"),
+      numReq: document.getElementById("numReq"),
+      specReq: document.getElementById("specReq")
+    };
+
+    passwordField.addEventListener("input", () => {
+      const val = passwordField.value;
+      const lenOK = val.length >= 8;
+      const upperOK = /[A-Z]/.test(val);
+      const numOK = /\d/.test(val);
+      const specOK = /[!@#$%^&*]/.test(val);
+
+      const conditions = [
+        { el: hints.lenReq, ok: lenOK },
+        { el: hints.upperReq, ok: upperOK },
+        { el: hints.numReq, ok: numOK },
+        { el: hints.specReq, ok: specOK },
+      ];
+
+      let allValid = true;
+      conditions.forEach(({ el, ok }) => {
+        el.style.display = ok ? "none" : "block";
+        if (!ok) allValid = false;
+      });
+
+      passwordField.classList.toggle("valid", allValid);
+      passwordField.classList.toggle("error", !allValid);
+    });
+
+    // Live input validation
+    document.querySelectorAll(".input").forEach(input => {
+      input.addEventListener("input", () => {
+        const hint = input.parentElement.querySelector(".hint");
+        const val = input.value;
+
+        // Auto-uppercase for name fields and department
+        if (['lastName', 'firstName', 'middleName', 'department', 'employeeID'].includes(input.name)) {
+          input.value = val.toUpperCase();
+        }
+
+        // Validation
+        if (input.name !== "password") {
+          const valid = validators[input.name] ? validators[input.name](input.value) : true;
+          input.classList.toggle("valid", valid);
+          input.classList.toggle("error", !valid);
+          if (hint) hint.style.display = valid ? "none" : "block";
+        }
+      });
+    });
+
+    // Show message function
+    function showMessage(message, type) {
+      const messageContainer = document.getElementById('messageContainer');
+      messageContainer.innerHTML = `
+        <div class="${type}-message">
+          ${message}
+        </div>
+      `;
+      setTimeout(() => {
+        messageContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    document.getElementById("adminForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      let allValid = true;
+      const formData = new FormData(e.target);
+      const form = Object.fromEntries(formData.entries());
+
+      // Validate all fields
+      document.querySelectorAll(".input").forEach(input => {
+        const isValid = input.name === "password" ? 
+          passwordField.classList.contains("valid") : 
+          validators[input.name] ? 
+          validators[input.name](input.value) : 
+          true;
+
+        if (!isValid) {
+          input.classList.add("error");
+          input.classList.remove("valid");
+          const hint = input.parentElement.querySelector(".hint");
+          if (hint) hint.style.display = "block";
+          allValid = false;
+        }
+      });
+
+      if (!allValid) {
+        showMessage("Please fix all errors before submitting.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/admin/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showMessage(data.msg, "success");
+          setTimeout(() => {
+            window.location.href = "/admin/account-management";
+          }, 2000);
+        } else {
+          showMessage(data.msg || "Error saving admin/professor.", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        showMessage("Error saving admin/professor.", "error");
+      }
+    });
+  </script>
+</body>
+</html>
